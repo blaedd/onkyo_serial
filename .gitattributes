@@ -1,0 +1,5 @@
+*.analysis binary
+*.min.js binary
+*.png binary
+
+src/python/pants/reporting/assets/js/prettify* binary
