@@ -36,7 +36,7 @@ class CommandPort(basic.LineOnlyReceiver):
     def lineReceived(self, line):
         try:
             self.factory.command(line)
-        except ValueError, e:
+        except ValueError as e:
             self.sendLine(e.args[0])
 
 

@@ -81,7 +81,7 @@ class ISCP(basic.LineOnlyReceiver):
         """
         # Seen some odd characters turn up at the start of serial communications.
         # None of these characters are part of the protocol.
-        line = filter(lambda x: 128 > ord(x) > 32, line)
+        line = [x for x in line if 128 > ord(x) > 32]
 
         if line[0:2] == '!1':
             cmd = core.iscp_to_command((line[2:].strip()))
@@ -351,7 +351,7 @@ class eISCPDiscovery(protocol.DatagramProtocol):
 
         try:
             cmd = core.eISCPPacket.parse(datagram)
-        except ValueError, e:
+        except ValueError as e:
             log.err(e)
             return
         if cmd.startswith('!xECNQSTN'):

@@ -125,8 +125,8 @@ def start():
     try:
         config.parseOptions()
     except usage.UsageError as errortext:
-        print('{}: {}'.format(sys.argv[0], errortext))
-        print('{}: Try --help for usage details'.format(sys.argv[0]))
+        print(('{}: {}'.format(sys.argv[0], errortext)))
+        print(('{}: Try --help for usage details'.format(sys.argv[0])))
         sys.exit(1)
 
     if config.subCommand == 'lirc_config':

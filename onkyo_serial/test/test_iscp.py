@@ -34,7 +34,7 @@ class ISCPTestCase(unittest.TestCase):
         self.proto.add_cb('mock', cb)
         self.proto.lineReceived('!1PWR00\x1a')
         self.assertTrue(cb.called)
-        self.assertEquals(cb.call_args, mock.call('PWR00'))
+        self.assertEqual(cb.call_args, mock.call('PWR00'))
 
     def testremoveCb(self):
         cb = mock.MagicMock()
@@ -52,7 +52,7 @@ class ISCPTestCase(unittest.TestCase):
         mixin.doCmd = mock.MagicMock()
         mixin._processData(packet)
         self.assertTrue(mixin.doCmd.called)
-        self.assertEquals(mixin.doCmd.call_args,
+        self.assertEqual(mixin.doCmd.call_args,
                           mock.call('!1PWR01'))
 
 
