@@ -25,7 +25,7 @@ class CommandPort(basic.LineOnlyReceiver):
             else:
                 cmd_name = cmd[0]
             cmdstr = '{}={}'.format(core.normalize_command(cmd_name), cmd[1])
-            self.sendLine(cmdstr)
+            self.sendLine(cmdstr.encode('utf-8'))
 
         self.factory.add_cb(self, mycb)
 

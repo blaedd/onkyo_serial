@@ -18,15 +18,15 @@ class ISCPTestCase(unittest.TestCase):
 
     def testCommand(self):
         self.proto.command('system-power=query')
-        self.assertEqual('!1PWRQSTN' + self.proto.send_delimiter,
+        self.assertEqual(('!1PWRQSTN' + self.proto.send_delimiter).encode('utf-8'),
                          self.tr.value())
         self.tr.clear()
         self.proto.command('!1PWR01')
-        self.assertEqual('!1PWR01' + self.proto.send_delimiter,
+        self.assertEqual(('!1PWR01' + self.proto.send_delimiter).encode('utf-8'),
                          self.tr.value())
         self.tr.clear()
         self.proto.command('PWR01')
-        self.assertEqual('!1PWR01' + self.proto.send_delimiter,
+        self.assertEqual(('!1PWR01' + self.proto.send_delimiter).encode('utf-8'),
                          self.tr.value())
 
     def testLineReceived(self):
@@ -50,10 +50,10 @@ class ISCPTestCase(unittest.TestCase):
         packet = str(core.eISCPPacket('!1PWR01\x1a'))
         mixin = iscp.eISCPMixin()
         mixin.doCmd = mock.MagicMock()
-        mixin._processData(packet)
+        mixin._processData(packet.encode('utf-8'))
         self.assertTrue(mixin.doCmd.called)
         self.assertEqual(mixin.doCmd.call_args,
-                          mock.call('!1PWR01'))
+                          mock.call(b'!1PWR01'))
 
 
 class MockProtocol(object):

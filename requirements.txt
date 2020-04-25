@@ -1,7 +1,6 @@
 docopt
 onkyo-eiscp
 pyserial
-# pylirc2
 pyxdg
 Twisted
 wheel

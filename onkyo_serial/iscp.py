@@ -13,7 +13,9 @@ from . import interfaces
 
 
 def command_to_packet(cmd):
-    return str(core.eISCPPacket('!1{}\x1a'.format(cmd)))
+    if isinstance(cmd, bytes):
+        cmd = cmd.decode('utf-8')
+    return core.eISCPPacket('!1{}\x1a'.format(cmd))
 
 
 # noinspection PyPep8Naming
@@ -71,7 +73,7 @@ class ISCP(basic.LineOnlyReceiver):
         except ValueError:
             core.iscp_to_command(cmd)
             cmd = '!1{}'.format(cmd)
-        self.sendLine(cmd)
+        self.sendLine(cmd.encode('utf-8'))
 
     def lineReceived(self, line):
         """Handle incoming line of text from the receiver.
@@ -79,9 +81,11 @@ class ISCP(basic.LineOnlyReceiver):
         Args:
             line: the line of text to process.
         """
+        if isinstance(line, bytes):
+            line = line.decode('utf-8')
         # Seen some odd characters turn up at the start of serial communications.
         # None of these characters are part of the protocol.
-        line = [x for x in line if 128 > ord(x) > 32]
+        line = ''.join([x for x in line if 128 > ord(x) > 32])
 
         if line[0:2] == '!1':
             cmd = core.iscp_to_command((line[2:].strip()))
@@ -89,7 +93,8 @@ class ISCP(basic.LineOnlyReceiver):
             for inst in self.cb:
                 self.cb[inst](line[2:].strip())
         else:
-            log.msg('invalid line ' + line)
+            log.msg('invalid line ')
+            log.msg(line)
 
     def sendLine(self, line):
         """Send a line of text to the receiver.
@@ -97,7 +102,9 @@ class ISCP(basic.LineOnlyReceiver):
         Args:
             line (str): Line of text to send.
         """
-        return self.transport.write(line + self.send_delimiter)
+        if isinstance(line, str):
+            line = line.encode('utf-8')
+        return self.transport.write(line + self.send_delimiter.encode('utf-8'))
 
     def add_cb(self, inst, cb):
         """Add a callback to be called for every response received.
@@ -176,8 +183,8 @@ class eISCPMixin(object):
     """
 
     def __init__(self):
-        self.header = {'data': '',
-                       'length': ''}
+        self.header = {'data': b'',
+                       'length': 0}
         self.cmd = self.init_cmd(0)
 
     @staticmethod
@@ -186,29 +193,31 @@ class eISCPMixin(object):
         Args:
             length: length of the packet.
         """
-        return {'data': '',
+        return {'data': b'',
                 'length': length,
                 'cur_length': 0}
 
     def reset(self):
         """Reset the current command being processed."""
         self.cmd = self.init_cmd(0)
-        self.header = {'data': '', 'length': 0}
+        self.header = {'data': b'', 'length': 0}
 
     def _headerStart(self):
         data = self.header['data']
-        i = data.find('I')
+        i = data.find(b'I')
         if i != -1:
             data = data[i:]
         else:
-            data = ''
+            data = b''
         self.header['data'] = data
 
     def _processData(self, data):
+        if isinstance(data, str):
+            data = data.encode('utf-8')
         while data:
             if self.header['length'] < 16:
                 self.header['data'] += data
-                data = ''
+                data = b''
                 self.header['length'] = len(self.header['data'])
                 if self.header['length'] >= 4:
                     while not self._isHeaderStart():
@@ -225,22 +234,22 @@ class eISCPMixin(object):
             self.cmd['data'] += data
             self.cmd['cur_length'] = len(self.cmd['data'])
             if self.cmd['cur_length'] >= self.cmd['length']:
-                end = self.cmd['data'].find('\x1a')
+                end = self.cmd['data'].find(b'\x1a')
                 self.doCmd(self.cmd['data'][:end])
                 data = self.cmd['data'][self.cmd['length']:]
                 self.reset()
 
     def _isHeaderStart(self):
         data = self.header['data']
-        if data.startswith('ISCP'):
+        if data.startswith(b'ISCP'):
             return True
         if len(data) > 3:
             return False
-        if len(data) == 3 and data.startswith('ISC'):
+        if len(data) == 3 and data.startswith(b'ISC'):
             return True
-        if len(data) == 2 and data.startswith('IS'):
+        if len(data) == 2 and data.startswith(b'IS'):
             return True
-        if len(data) == 1 and data.startswith('I'):
+        if len(data) == 1 and data.startswith(b'I'):
             return True
         if len(data) == 0:
             return True
@@ -279,6 +288,8 @@ class eISCPBridge(protocol.Protocol, eISCPMixin):
         self.factory.remove_cb(self)
 
     def dataReceived(self, data):
+        if isinstance(data, str):
+            data = data.encode('utf-8')
         self._processData(data)
 
     def doCmd(self, cmd):
