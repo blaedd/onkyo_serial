@@ -25,12 +25,12 @@ class RunOptions(GenericOptions):
     """Options related to running the bridge."""
     optParameters = [
         ['eiscp', 'p', '60128', 'eISCP listen port'],
-        ['listen', 'l', 'eiscp'
+        ['listen', 'l', 'eiscp,command',
                         'Type of ports to listen on. Valid types are: {}'.format(
             ','.join(PORT_TYPES))
          ],
         ['iscp_type', 't', 'serial', 'Type of ISCP device, serial, tcp'],
-        ['iscp_device', 'd', '/dev/ttyUSB1',
+        ['iscp_device', 'd', '/dev/ttyUSB0',
          'Device (or host:port) for the ISCP device'],
         ['command_port', 'c', '60129', 'Command port to listen on'],
     ]
