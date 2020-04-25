@@ -81,7 +81,8 @@ class SerialISCPService(service.MultiService):
     def startService(self):
         from twisted.internet import reactor
         service.Service.startService(self)
-        self._serial = serialport.SerialPort(self._iscp, self._device, reactor, baudrate=self._baudrate)
+        self._serial = serialport.SerialPort(self._iscp, self._device, reactor,
+                                             baudrate=self._baudrate)
         for svc in self:
             svc.startService()
 

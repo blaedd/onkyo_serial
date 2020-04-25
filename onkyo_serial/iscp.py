@@ -100,7 +100,7 @@ class ISCP(basic.LineOnlyReceiver):
         """Send a line of text to the receiver.
 
         Args:
-            line (str): Line of text to send.
+            line (bytes): Line of text to send.
         """
         if isinstance(line, str):
             line = line.encode('utf-8')
@@ -139,7 +139,7 @@ class ISCPClientFactory(protocol.ReconnectingClientFactory,
         interfaces.ISCPProxyMixin.__init__(self)
         if not interfaces.IISCPDevice.implementedBy(self.protocol):
             raise TypeError('protocol must implement {!s}'.format(
-                    interfaces.IISCPDevice))
+                interfaces.IISCPDevice))
         self._onkyo = None
 
     def clientConnectionLost(self, connector, reason):
@@ -147,7 +147,7 @@ class ISCPClientFactory(protocol.ReconnectingClientFactory,
         del self._onkyo
         self._onkyo = None
         protocol.ReconnectingClientFactory.clientConnectionLost(
-                self, connector, reason)
+            self, connector, reason)
 
     def clientConnectionFailed(self, connector, reason):
         log.msg('Connection failed {}'.format(reason))
@@ -183,8 +183,10 @@ class eISCPMixin(object):
     """
 
     def __init__(self):
-        self.header = {'data': b'',
-                       'length': 0}
+        self.header = {
+            'data': b'',
+            'length': 0
+        }
         self.cmd = self.init_cmd(0)
 
     @staticmethod
@@ -193,9 +195,11 @@ class eISCPMixin(object):
         Args:
             length: length of the packet.
         """
-        return {'data': b'',
-                'length': length,
-                'cur_length': 0}
+        return {
+            'data': b'',
+            'length': length,
+            'cur_length': 0
+        }
 
     def reset(self):
         """Reset the current command being processed."""
@@ -367,8 +371,8 @@ class eISCPDiscovery(protocol.DatagramProtocol):
             return
         if cmd.startswith('!xECNQSTN'):
             response = 'ECN{model}/{port}/{region}/{mac}'.format(
-                    model=self.model, port=self.eiscp_port, region=self.region,
-                    mac=self.mac)
+                model=self.model, port=self.eiscp_port, region=self.region,
+                mac=self.mac)
             self.transport.write(command_to_packet(response), addr)
         else:
             log.msg('Unknown command %s', cmd)

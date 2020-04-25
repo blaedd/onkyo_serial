@@ -1,4 +1,5 @@
 import setuptools
+
 import onkyo_serial
 
 with open('README.md') as fh:
@@ -20,11 +21,11 @@ setuptools.setup(
         ],
     },
     install_requires=[
-         'onkyo-eiscp~=1.2.7',
-         'pyserial~=3.4',
-         'pyxdg~=0.26',
-         'Twisted~=20.3.0',
-         'zope.interface~=5.1.0',
-         'pytz~=2019.3',
+        'onkyo-eiscp~=1.2.7',
+        'pyserial~=3.4',
+        'pyxdg~=0.26',
+        'Twisted~=20.3.0',
+        'zope.interface~=5.1.0',
+        'pytz~=2019.3',
     ],
 )

@@ -1,10 +1,10 @@
-from eiscp import core
-
-from .. import iscp
 import mock
-from twisted.trial import unittest
+from eiscp import core
 from twisted.internet import protocol
 from twisted.test import proto_helpers
+from twisted.trial import unittest
+
+from .. import iscp
 
 
 class ISCPTestCase(unittest.TestCase):
@@ -53,7 +53,7 @@ class ISCPTestCase(unittest.TestCase):
         mixin._processData(packet.encode('utf-8'))
         self.assertTrue(mixin.doCmd.called)
         self.assertEqual(mixin.doCmd.call_args,
-                          mock.call(b'!1PWR01'))
+                         mock.call(b'!1PWR01'))
 
 
 class MockProtocol(object):

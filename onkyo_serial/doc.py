@@ -25,7 +25,7 @@ def role_twisted(name, rawtext, text, lineno, inliner, options=None,
     # checking if the number is valid
     if not text.startswith('twisted'):
         msg = inliner.reporter.error(
-                'Invalid twisted class: %s' % text, line=lineno)
+            'Invalid twisted class: %s' % text, line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
 
@@ -54,7 +54,7 @@ def make_link_node(rawtext, app, link_text, slug, options):
 
     if not base_url:
         raise ValueError(
-                "'twisted_url' isn't set in our config")
+            "'twisted_url' isn't set in our config")
     ref = base_url.rstrip('/') + '/' + slug
     set_classes(options)
 
