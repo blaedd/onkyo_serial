@@ -37,7 +37,11 @@ class CommandPort(basic.LineOnlyReceiver):
         try:
             self.factory.command(line)
         except ValueError as e:
-            self.sendLine(e.args[0])
+            cmd = e.args[0]
+            if isinstance(cmd, str):
+                cmd = cmd.encode('utf-8')
+
+            self.sendLine(cmd)
 
 
 class CommandPortFactory(protocol.Factory, interfaces.ISCPProxyMixin):
