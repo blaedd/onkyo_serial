@@ -9,26 +9,18 @@ from twisted.python import usage
 
 from . import command
 from . import iscp
-from . import lirc
+# from . import lirc
 from . import service
 
 __author__ = 'blaedd@gmail.com'
 
-PORT_TYPES = ['command', 'eiscp', 'lirc']
+PORT_TYPES = ['command', 'eiscp']
 
 
 class GenericOptions(usage.Options):
     """Generic options."""
     optParameters = [
-        ['program_name', 'n', 'onkyo_serial', 'Program name to use for lirc'],
         ['remote', 'r', 'RC-690M', 'Remote to listen for.'],
-    ]
-
-
-class LircRcOptions(GenericOptions):
-    """lircrc related options."""
-    optParameters = [
-        ['path', 'p', None, 'Path to (over)write a default lircrc to.']
     ]
 
 
@@ -36,7 +28,7 @@ class RunOptions(GenericOptions):
     """Options related to running the bridge."""
     optParameters = [
         ['eiscp', 'p', '60128', 'eISCP listen port'],
-        ['listen', 'l', 'eiscp,lirc',
+        ['listen', 'l', 'eiscp'
          'Type of ports to listen on. Valid types are: {}'.format(
                  ','.join(PORT_TYPES))
          ],
@@ -44,8 +36,6 @@ class RunOptions(GenericOptions):
         ['iscp_device', 'd', '/dev/ttyUSB1',
          'Device (or host:port) for the ISCP device'],
         ['command_port', 'c', '60129', 'Command port to listen on'],
-        # ['lirc_socket', 's', '/var/run/lirc/lircd', 'Path to lirc socket.'],
-        ['lirc_config', None, None, 'Path to a custom lirc configuration file.'],
     ]
 
     compData = usage.Completions(
@@ -73,7 +63,6 @@ class Options(usage.Options):
     """Options."""
 
     subCommands = [
-        ['lirc_config', None, LircRcOptions, 'Write a default lircrc'],
         ['run', None, RunOptions, 'Run the server'],
     ]
     defaultSubCommand = 'run'
@@ -110,13 +99,6 @@ def makeService(config):
                 functools.partial(command.CommandPortFactory, iscp_service.getProtocol()))
         command_service.setServiceParent(iscp_service)
 
-    if 'lirc' in config['listen']:
-        from twisted.internet import reactor
-        ep = lirc.LircEndPoint(reactor, config['program_name'], config['lirc_config'])
-        lirc_service = lirc.LircClientService(
-                ep,
-                functools.partial(command.CommandPortFactory, iscp_service.getProtocol()))
-        lirc_service.setServiceParent(iscp_service)
     return iscp_service
 
 
@@ -128,13 +110,6 @@ def start():
         print(('{}: {}'.format(sys.argv[0], errortext)))
         print(('{}: Try --help for usage details'.format(sys.argv[0])))
         sys.exit(1)
-
-    if config.subCommand == 'lirc_config':
-        log.msg('Writing default lircrc to {}'.format(config.subOptions['path']))
-        lirc.write_default_config(config.subOptions['path'],
-                                  config.subOptions['program_name'],
-                                  config.subOptions['remote'])
-        sys.exit(0)
     elif config.subCommand == 'run':
         from twisted.internet import reactor
 
