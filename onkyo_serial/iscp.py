@@ -66,6 +66,8 @@ class ISCP(basic.LineOnlyReceiver):
         Args:
             cmd: Command to execute.
         """
+        if isinstance(cmd, bytes):
+            cmd = cmd.decode('utf-8')
         if cmd.startswith('!1'):
             cmd = cmd[2:]
         try:
