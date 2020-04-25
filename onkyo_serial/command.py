@@ -3,7 +3,7 @@
 from eiscp import core
 from twisted.internet import protocol
 from twisted.protocols import basic
-
+from twisted.python import log
 from . import interfaces
 
 __author__ = 'blaedd@gmail.com'
@@ -34,6 +34,7 @@ class CommandPort(basic.LineOnlyReceiver):
         self.factory.remove_cb(self)
 
     def lineReceived(self, line):
+        log.msg(line)
         try:
             self.factory.command(line)
         except ValueError as e:

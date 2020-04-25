@@ -49,8 +49,8 @@ class ISCP(basic.LineOnlyReceiver):
         5 - Ground
 
     """
-    delimiter = '\x1a'
-    send_delimiter = '\n'
+    delimiter = b'\x1a'
+    send_delimiter = b'\n'
 
     def __init__(self):
         self.state = {}
@@ -106,7 +106,7 @@ class ISCP(basic.LineOnlyReceiver):
         """
         if isinstance(line, str):
             line = line.encode('utf-8')
-        return self.transport.write(line + self.send_delimiter.encode('utf-8'))
+        return self.transport.write(line + self.send_delimiter)
 
     def add_cb(self, inst, cb):
         """Add a callback to be called for every response received.
@@ -218,8 +218,10 @@ class eISCPMixin(object):
         self.header['data'] = data
 
     def _processData(self, data):
+        log.msg(data)
         if isinstance(data, str):
             data = data.encode('utf-8')
+            print(data)
         while data:
             if self.header['length'] < 16:
                 self.header['data'] += data

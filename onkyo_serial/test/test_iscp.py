@@ -18,15 +18,15 @@ class ISCPTestCase(unittest.TestCase):
 
     def testCommand(self):
         self.proto.command('system-power=query')
-        self.assertEqual(('!1PWRQSTN' + self.proto.send_delimiter).encode('utf-8'),
+        self.assertEqual('!1PWRQSTN'.encode('utf-8') + self.proto.send_delimiter,
                          self.tr.value())
         self.tr.clear()
         self.proto.command('!1PWR01')
-        self.assertEqual(('!1PWR01' + self.proto.send_delimiter).encode('utf-8'),
+        self.assertEqual('!1PWR01'.encode('utf-8') + self.proto.send_delimiter,
                          self.tr.value())
         self.tr.clear()
         self.proto.command('PWR01')
-        self.assertEqual(('!1PWR01' + self.proto.send_delimiter).encode('utf-8'),
+        self.assertEqual('!1PWR01'.encode('utf-8') + self.proto.send_delimiter,
                          self.tr.value())
 
     def testLineReceived(self):
