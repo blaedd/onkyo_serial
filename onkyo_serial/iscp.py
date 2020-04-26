@@ -287,7 +287,7 @@ class eISCPBridge(protocol.Protocol, eISCPMixin):
 
     def connectionMade(self):
         def eiscp_callback(cmd):
-            self.transport.write(command_to_packet(cmd))
+            self.transport.write(str(command_to_packet(cmd)).encode('utf-8'))
 
         self.factory.add_cb(self, eiscp_callback)
 
