@@ -218,7 +218,6 @@ class eISCPMixin(object):
         self.header['data'] = data
 
     def _processData(self, data):
-        log.msg(data)
         if isinstance(data, str):
             data = data.encode('utf-8')
             print(data)
